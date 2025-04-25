@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  user_db_container:
+    image: postgres:15
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  admin_db_container:
+    image: postgres:15
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - admin_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d analytics_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  task_db_container:
+    image: postgres:15
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - task_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  user_servise:
+    build: ./user_servise
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=user_db_container
+    depends_on:
+      user_db_container:
+        condition: service_healthy
+
+  admin_servise:
+    build: ./admin_servise
+    ports:
+      - "8002:8000"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=admin_db_container
+    depends_on:
+      user_db_container:
+        condition: service_healthy
+    
+  task_servise:
+    build: ./task_servise
+    ports:
+      - "8003:8000"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=task_db_container
+    depends_on:
+      task_db_container:
+        condition: service_healthy
+volumes:
+  user_db_data:
+  admin_db_data:
+  task_db_data:
