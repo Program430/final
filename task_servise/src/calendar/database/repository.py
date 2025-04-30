@@ -10,6 +10,7 @@ from src.calendar.database.models import MeetingModel, UserIdModel
 
 class MeetingSqlAlchemyRepository(MeetingDatabaseAbstractRepository):
     @log_errors
+    @staticmethod
     async def create_meeting(meeting: Meeting) -> Meeting:
         async with session_maker() as session:
             meeting = MeetingMapper.to_model(meeting)
@@ -21,6 +22,7 @@ class MeetingSqlAlchemyRepository(MeetingDatabaseAbstractRepository):
             return MeetingMapper.to_entity(meeting)
         
     @log_errors
+    @staticmethod
     async def get_by(**kwargs) -> Optional[Meeting]:
         async with session_maker() as session:
             query = select(MeetingModel).filter_by(**kwargs)
@@ -34,6 +36,7 @@ class MeetingSqlAlchemyRepository(MeetingDatabaseAbstractRepository):
         return MeetingMapper.to_entity(result)
     
     @log_errors
+    @staticmethod
     async def add_user(user_id: int, meeting_id: int) -> None:
         async with session_maker() as session:
             user = UserIdModel(user_id=user_id, meeting_id=meeting_id)
@@ -43,26 +46,37 @@ class MeetingSqlAlchemyRepository(MeetingDatabaseAbstractRepository):
             await session.commit()
     
     @log_errors
-    async def delete_meeting(meeting_id: int) -> None:
+    @staticmethod
+    async def delete_meeting(meeting_id: int) -> bool:
         async with session_maker() as session:
             query = delete(MeetingModel).where(MeetingModel.id == meeting_id)
             
-            await session.execute(query)
-                
+            res = await session.execute(query)
+
             await session.commit()
 
+            return res.rowcount != 0
+
     @log_errors
-    async def update_meeting(meeting: Meeting) -> None:
+    @staticmethod
+    async def update_meeting(meeting: Meeting) -> bool:
         async with session_maker() as session:
+            update_data = {
+                "date": meeting.date,
+                "description": meeting.description,
+                "name": meeting.name
+            }
+
             query = (
                 update(MeetingModel)
                 .where(MeetingModel.id == meeting.id)
-                .values(date = meeting.date, description = meeting.description, 
-                        name = meeting.name)
+                .values(**update_data)
             )
             
-            await session.execute(query)
+            res = await session.execute(query)
             await session.commit()
+
+            return res.rowcount != 0
     
 
     

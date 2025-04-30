@@ -9,7 +9,7 @@ from src.user.domain.servises import user_servise
 from src.exception import AlreadyExist, DontExist
 from src.user.domain.entity import User
 
-from src.authorization.domain.servises import TokenServise
+from src.authorization.domain.servises import TokenServiсe
 
 user_protected_router = APIRouter(prefix='/protected/user')
 

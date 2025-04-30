@@ -4,14 +4,14 @@ from datetime import datetime, timedelta
 
 from src.config import JWT_SECRET_KEY
 
-def get_user_id_from_token(authorization1: str = Header(...)) -> int:
-    if not authorization1 or not authorization1.startswith("Bearer "):
+def get_user_id_from_token(authorization_token: str = Header(...)) -> int:
+    if not authorization_token or not authorization_token.casefold().startswith("Bearer "):
         raise HTTPException(
             status_code=401,
             detail="Пропущен заголовок авторизации."
         )
     
-    token = authorization1.split(" ")[1]
+    token = authorization_token.split(" ")[1]
 
     try:
         return get_id_from_token(token)

@@ -10,7 +10,7 @@ from src.user.domain.servises import user_servise
 from src.user.domain.exception import AlreadyExist, DontExist, AnotherMicroserviseError
 from src.user.domain.entity import User
 
-from src.authorization.domain.servises import TokenServise
+from src.authorization.domain.servises import TokenServiсe
 from src.authorization.api.schemas import TokenPair
 
 user_router = APIRouter(prefix='/user')
@@ -32,7 +32,7 @@ async def user_create(user_create_data: UserCreateSchema, command_code: Annotate
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=unexpected_error)
     
-    return TokenServise.get_tokens(user.id)
+    return TokenServiсe.get_tokens(user.id)
 
 @user_router.post('/login', status_code=status.HTTP_200_OK, response_model=TokenPair)
 async def user_create(user_login_data: UserLoginSchema) -> TokenPair:
@@ -43,7 +43,7 @@ async def user_create(user_login_data: UserLoginSchema) -> TokenPair:
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=unexpected_error)
     
-    return TokenServise.get_tokens(user.id)
+    return TokenServiсe.get_tokens(user.id)
 
 @user_router.put('/update', status_code=status.HTTP_204_NO_CONTENT)
 async def user_update(user_update_data: UserUpdateSchema, 

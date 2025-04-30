@@ -6,7 +6,7 @@ from src.task.domain.repository import TaskDatabaseAbstractRepository, TaskInteg
 from src.calendar.database.repository import MeetingSqlAlchemyRepository
 from src.task.database.repository import TaskSqlAlchemyRepository
 from src.task.integration.repository import TaskApiRepository
-from src.calendar.api.public.shemas import MeetingCreateSchema, AdUserToMeetingSchema
+from src.calendar.api.public.shemas import MeetingCreateSchema, AdUserToMeetingSchema, MeetingUpdateSchema
 from src.calendar.domain.entity import Meeting
 from src.exception import BadRequest, PermissionException
 
@@ -50,11 +50,13 @@ class MeetingServise:
 
         await self.meeting_db_repository.delete_meeting(id)
 
-    async def update(self, id: int, user_who_send_request_id: int) -> None:
+    async def update(self, meeting: MeetingUpdateSchema, user_who_send_request_id: int) -> None:
         meeting = await self.meeting_db_repository.get_by(id=id, who_create=user_who_send_request_id)
 
         if not meeting:
             BadRequest('Встреча не найдена.')
+
+        meeting = Meeting(id = meeting.id, who_create=user_who_send_request_id, )
 
         await self.meeting_db_repository.update_meeting(id)
 

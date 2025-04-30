@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from src.config import JWT_SECRET_KEY
 from src.authorization.domain.exception import TokenError
 
-class TokenServise:
+class TokenServiсe:
     @staticmethod
     def get_user_id_from_token(access_token: str) -> int:
         try:

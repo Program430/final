@@ -7,8 +7,8 @@ from alembic import context
 
 from src.database import BaseDatabaseModel
 
-from src.user.database.models import *
-from src.command.database.models import *
+from src.user.database.models import UserModel
+from src.command.database.models import CommandModel, MessageModel, DepartmentModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -43,6 +43,11 @@ def run_migrations_offline() -> None:
 
     """
     url = config.get_main_option("sqlalchemy.url")
+
+    if not url:
+        raise ValueError("Database URL is not configured. "
+                         "Please set sqlalchemy.url in alembic.ini")
+    
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -60,6 +65,10 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    config_section = config.get_section(config.config_ini_section)
+    if not config_section:
+        raise ValueError(f"Configuration section '{config.config_ini_section}' not found")
+    
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

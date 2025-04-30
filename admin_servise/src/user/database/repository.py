@@ -17,6 +17,7 @@ from src.command.domain.entity import Command
 
 class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
     @log_errors
+    @staticmethod
     async def create(user: User) -> User:
         async with session_maker() as session:
             user_model = UserMapper.from_entity_to_model(user)
@@ -27,6 +28,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return UserMapper.from_model_to_entity(user_model)
     
     @log_errors
+    @staticmethod
     async def get_by(**kwargs) -> Optional[User]:
         async with session_maker() as session:
             query = select(UserModel).filter_by(**kwargs)
@@ -40,6 +42,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return UserMapper.from_model_to_entity(result)
     
     @log_errors
+    @staticmethod
     async def get_user_command(user_id: int) -> Command:
         async with session_maker() as session:
             query = select(UserModel).filter_by(id = user_id).options(joinedload(UserModel.command))
@@ -50,6 +53,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return CommandMapper.from_model_to_entity(result.command)
     
     @log_errors
+    @staticmethod
     async def update_status(user: User) -> None:
         async with session_maker() as session:
             query = (
@@ -62,6 +66,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
             await session.commit()
     
     @log_errors
+    @staticmethod
     async def delete(ids: List[int]) -> None:
         async with session_maker() as session:
             query = (
@@ -73,6 +78,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
             await session.commit()
 
     @log_errors
+    @staticmethod
     async def get_my_workers(user: User) -> None:
         async with session_maker() as session:
             if user.status == Status.COMMAND_LIDER or user.status == Status.COMMAND_ADMIN:

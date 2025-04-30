@@ -13,11 +13,11 @@ class MeetingDatabaseAbstractRepository(ABC):
         raise NotImplemented
     
     @abstractmethod
-    async def delete_meeting(meeting_id: int) -> None:
+    async def delete_meeting(meeting_id: int) -> bool:
         raise NotImplemented
     
     @abstractmethod
-    async def update_meeting(meeting: Meeting) -> None:
+    async def update_meeting(meeting: Meeting) -> bool:
         raise NotImplemented
     
     @abstractmethod

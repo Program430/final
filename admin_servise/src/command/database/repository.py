@@ -4,15 +4,15 @@ from datetime import datetime
 
 from src.logger import log_errors
 from src.database import session_maker
-from src.user.domain.entity import User
-from src.user.domain.repository import UserDatabaseAbstractRepository
+from src.command.domain.repository import CommandDatabaseAbstractRepository
 from src.command.database.mapper import CommandMapper, DepartmentMapper, MessageMapper
 from src.command.database.models import CommandModel, DepartmentModel, MessageModel
 from src.command.domain.entity import Command, Department, Message
 
 
-class CommandSQLAlchemyRepository(UserDatabaseAbstractRepository):
+class CommandSQLAlchemyRepository(CommandDatabaseAbstractRepository):
     @log_errors
+    @staticmethod
     async def create(command: Command) -> Command:
         async with session_maker() as session:
             command_model = CommandMapper.from_entity_to_model(command)
@@ -23,6 +23,7 @@ class CommandSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return CommandMapper.from_model_to_entity(command_model)
     
     @log_errors
+    @staticmethod
     async def create_department(department: Department) -> Department:
         async with session_maker() as session:
             department_model = DepartmentMapper.from_entity_to_model(department)
@@ -33,6 +34,7 @@ class CommandSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return DepartmentMapper.from_model_to_entity(department_model)
     
     @log_errors
+    @staticmethod
     async def create_message(message: Message) -> Message:
         async with session_maker() as session:
             message_model = MessageMapper.from_entity_to_model(message)
@@ -43,6 +45,7 @@ class CommandSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return MessageMapper.from_model_to_entity(message_model)
     
     @log_errors
+    @staticmethod
     async def get_by(**kwargs) -> Optional[Command]:
         async with session_maker() as session:
             query = select(CommandModel).filter_by(**kwargs)
@@ -56,7 +59,8 @@ class CommandSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return CommandMapper.from_model_to_entity(result)
     
     @log_errors
-    async def get_department_by(**kwargs) -> Department:
+    @staticmethod
+    async def get_department_by(**kwargs) -> Optional[Department]:
         async with session_maker() as session:
             query = select(DepartmentModel).filter_by(**kwargs)
             results = await session.execute(query)
@@ -69,15 +73,13 @@ class CommandSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return DepartmentMapper.from_model_to_entity(result)
     
     @log_errors
+    @staticmethod
     async def get_messages_by(**kwargs) -> List[Message]:
         async with session_maker() as session:
             query = select(MessageModel).filter_by(**kwargs)
             results = await session.execute(query)
 
             results = results.scalars().all()
-
-        if results is None:
-            return []
 
         return [MessageMapper.from_model_to_entity(result) for result in results]
     

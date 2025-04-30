@@ -10,6 +10,7 @@ from src.mark.database.models import MarkModel
 
 class MarkSqlAlchemyRepository(TaskDatabaseAbstractRepository):
     @log_errors
+    @staticmethod
     async def create_mark(mark: Mark) -> Mark:
         async with session_maker() as session:
             mark_model = MarkMapper.to_model(mark)
@@ -21,6 +22,7 @@ class MarkSqlAlchemyRepository(TaskDatabaseAbstractRepository):
             return MarkMapper.to_entity(mark_model)
         
     @log_errors
+    @staticmethod
     async def get_by(**kwargs) -> Optional[Mark]:
         async with session_maker() as session:
             query = select(MarkModel).filter_by(**kwargs)

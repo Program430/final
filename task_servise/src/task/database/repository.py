@@ -13,6 +13,7 @@ from src.mark.database.models import MarkModel
 
 class TaskSqlAlchemyRepository(TaskDatabaseAbstractRepository):
     @log_errors
+    @staticmethod
     async def create_tasks(tasks: List[Task]) -> List[Task]:
         task_models = [TaskMapper.to_model(task) for task in tasks]
         async with session_maker() as session:
@@ -26,6 +27,7 @@ class TaskSqlAlchemyRepository(TaskDatabaseAbstractRepository):
             return [TaskMapper.to_entity(task_model) for task_model in task_models]
         
     @log_errors
+    @staticmethod
     async def get_by(**kwargs) -> Optional[Task]:
         async with session_maker() as session:
             query = select(TaskModel).filter_by(**kwargs)
@@ -39,6 +41,7 @@ class TaskSqlAlchemyRepository(TaskDatabaseAbstractRepository):
         return TaskMapper.to_entity(result)
     
     @log_errors
+    @staticmethod
     async def get_tasks_for_me(id: int) -> List[Task]:
         async with session_maker() as session:
             query = select(TaskModel).filter_by(user_who_take = id)
@@ -49,6 +52,7 @@ class TaskSqlAlchemyRepository(TaskDatabaseAbstractRepository):
         return [TaskMapper.to_entity(task) for task in tasks]
 
     @log_errors
+    @staticmethod
     async def get_tasks_i_send(id: int) -> List[Task]:
         async with session_maker() as session:
             query = select(TaskModel).filter_by(user_who_send = id)
@@ -59,6 +63,7 @@ class TaskSqlAlchemyRepository(TaskDatabaseAbstractRepository):
         return [TaskMapper.to_entity(task) for task in tasks]
     
     @log_errors
+    @staticmethod
     async def delete_tasks(task_ids: List[int]) -> None:
         async with session_maker() as session:
             tasks_to_delete = await session.execute(
@@ -72,6 +77,7 @@ class TaskSqlAlchemyRepository(TaskDatabaseAbstractRepository):
             await session.commit()
 
     @log_errors
+    @staticmethod
     async def update(task: Task) -> None:
         async with session_maker() as session:
             query = (
@@ -85,6 +91,7 @@ class TaskSqlAlchemyRepository(TaskDatabaseAbstractRepository):
             await session.commit()
 
     @log_errors
+    @staticmethod
     async def get_all_marks_by_who_take_id(id: int) -> List[Mark]:
         async with session_maker() as session:
             tasks_query = select(TaskModel).where(TaskModel.user_who_take == id)

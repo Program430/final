@@ -12,7 +12,7 @@ class TaskApiRepository(TaskIntegrationAbstractRepository):
     }
     @classmethod
     async def get_my_workers(cls, user_id: int):
-        cls.headers['authorization1'] = f'Bearer {generate_access_tokens(user_id)}'
+        cls.headers['authorization_token'] = f'Bearer {generate_access_tokens(user_id)}'
         async with aiohttp.ClientSession() as session:
             async with session.get(cls.url, headers=cls.headers) as response:
                 workers_data = await response.json()

@@ -12,6 +12,7 @@ from src.user.database.models import UserModel
 
 class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
     @log_errors
+    @staticmethod
     async def create(user: User) -> User:
         async with session_maker() as session:
             user_model = UserMapper.from_entity_to_model(user)
@@ -22,6 +23,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return UserMapper.from_model_to_entity(user_model)
     
     @log_errors
+    @staticmethod
     async def get_by(**kwargs) -> Optional[User]:
         async with session_maker() as session:
             query = select(UserModel).filter_by(**kwargs)
@@ -35,6 +37,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
         return UserMapper.from_model_to_entity(result)
     
     @log_errors
+    @staticmethod
     async def update(user: User) -> None:
         async with session_maker() as session:
             query = (
@@ -47,6 +50,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
             await session.commit()
 
     @log_errors
+    @staticmethod
     async def delete(id: int) -> None:
         async with session_maker() as session:
             query = (
@@ -59,6 +63,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
             await session.commit()
     
     @log_errors
+    @staticmethod
     async def undelete(id: int) -> None:
         async with session_maker() as session:
             query = (
@@ -71,6 +76,7 @@ class UserSQLAlchemyRepository(UserDatabaseAbstractRepository):
             await session.commit()
 
     @log_errors
+    @staticmethod
     async def full_delete() -> List[int]:
         thirty_days_ago = datetime.now() - timedelta(days=30)
         async with session_maker() as session:
